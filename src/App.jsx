@@ -6,7 +6,7 @@ import axios from 'axios';
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export default function App() {
-const [location, setLocation] = useState({display_name: 'VB'});
+const [location, setLocation] = useState({display_name: ""});
 const [searchQuery, setSearchQuery] = useState('');
 
 function updateQuery(event) {
@@ -21,11 +21,17 @@ function updateQuery(event) {
 
 }
 
+    
+  }
+
   return (
     <Container>
-      <LocationForm onClick={getLocation} onChange={updateQuery}show={""} searchQuery={searchQuery} />
+      <LocationForm 
+      onClick={getLocation} 
+      onChange={updateQuery}
+      show={""} 
+      searchQuery={searchQuery} />
       <h2>The city is {location.display_name}</h2>
-      <p>Query: {searchQuery}</p>
     </Container>
   );
 }
