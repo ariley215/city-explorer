@@ -12,8 +12,10 @@ export default function App() {
   const [mapImage, setMapImage] = useState(null);
 
   function updateQuery(event) {
-    setSearchQuery(event.target.value);
     console.log(event.target.value)
+    setSearchQuery(event.target.value);
+  
+  
   }
 
   async function getLocation() {
@@ -28,6 +30,7 @@ export default function App() {
 
 
       setLocation({ city: display_name, lat, lon });
+      exploreMap(lat, lon);
 
     }
     catch (error) {
@@ -35,27 +38,21 @@ export default function App() {
     }
   }
 
-  const exploreMap = async () => {
+  const exploreMap = async (cityLat, cityLon) => {
     try {
       if (!location.lat || !location.lon) {
         console.warn('Location data is not available. Aborting exploreMap.');
         return;
       }
-      const locationString = `${location.lat}, ${location.lon}`;
+      const locationString = `${cityLat},${cityLon}`;
       // value not being held
-     
-      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${encodeURIComponent(locationString)}&zoom=12`;
+     console.log(locationString);
+      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
 
       console.log(apiUrl);
-      const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-      if (response.status === 200) {
+     
+        setMapImage(apiUrl);
 
-        const dataUrl = `data:image/png;base64,${Buffer.from(response.data, 'binary').toString('base64')}`;
-
-        setMapImage(dataUrl);
-      } else {
-        alert('failed to fetch map');
-      }
     } catch (error) {
       console.error('API Request Error:', error);
     }
