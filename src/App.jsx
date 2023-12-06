@@ -1,35 +1,52 @@
+/* eslint-disable no-empty */
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Container from 'react-bootstrap/Container';
+import LocationForm from './LocationForm';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const API_KEY = import.meta.env.VITE_API_KEY;
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+  const [location, setLocation] = useState({ city: '', lat: '', lon: '' });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  function updateQuery(event) {
+    console.log(event)
+    setSearchQuery(event.target.value);
+  }
+
+console.log(API_KEY)
+  async function getLocation() {
+    // alert('getting')
+
+    const API = `https://us1.locationiq.com/v1/search.php?key=${API_KEY}&q=${searchQuery}&format=json`;
+    console.log('Before Axios Request', API);
+    try {
+      const response = await axios.get(API);
+      console.log('API Response:', response.data);
+      const { display_name, lat, lon } = response.data[0];
+      
+
+      setLocation({ city: display_name, lat, lon });
+      
+    }
+   catch (error){
+   console.error('API Request Error:', error);
+   }
+  }
+
+
+console.log(location)
+return (
+  <Container>
+    <LocationForm
+      handleChangeCity={getLocation}
+      updateQuery={updateQuery}
+   />
+    <h2>The city is {location.city}</h2>
+    <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>
+  </Container>
+);
+
 }
 
-export default App
