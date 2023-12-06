@@ -11,6 +11,7 @@ export default function LocationForm({handleChangeCity, updateQuery}) {
     event.preventDefault();
     handleChangeCity()
     console.log(event.target.value)
+    exploreMap();
   }
 
 

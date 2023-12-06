@@ -9,13 +9,13 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 export default function App() {
   const [location, setLocation] = useState({ city: '', lat: '', lon: '' });
   const [searchQuery, setSearchQuery] = useState('');
+  const [mapImage, setMapImage] = useState(null);
 
   function updateQuery(event) {
     console.log(event)
     setSearchQuery(event.target.value);
   }
 
-console.log(API_KEY)
   async function getLocation() {
     // alert('getting')
 
