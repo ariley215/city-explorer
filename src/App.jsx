@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import LocationForm from './LocationForm';
@@ -6,7 +7,7 @@ import axios from 'axios';
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export default function App() {
-  const [location, setLocation] = useState( "");
+  const [location, setLocation] = useState({ city: '', lat: '', lon: '' });
   const [searchQuery, setSearchQuery] = useState('');
 
   function updateQuery(event) {
@@ -23,17 +24,16 @@ console.log(API_KEY)
     try {
       const response = await axios.get(API);
       console.log('API Response:', response.data);
-      setLocation(response.data[0].display_name );
+      const { display_name, lat, lon } = response.data[0];
+      
+
+      setLocation({ city: display_name, lat, lon });
+      
     }
    catch (error){
-   
-   
-    console.error('API Request Error:', error);
+   console.error('API Request Error:', error);
    }
   }
-// function changeCity(newCity) {
-//   getLocation(newCity)
-// }
 
 
 console.log(location)
@@ -43,7 +43,8 @@ return (
       handleChangeCity={getLocation}
       updateQuery={updateQuery}
    />
-    <h2>The city is {location}</h2>
+    <h2>The city is {location.city}</h2>
+    <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>
   </Container>
 );
 
