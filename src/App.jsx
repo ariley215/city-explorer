@@ -12,12 +12,14 @@ export default function App() {
   const [mapImage, setMapImage] = useState(null);
 
   function updateQuery(event) {
-    console.log(event)
+    console.log(event.target.value)
     setSearchQuery(event.target.value);
+  
+  
   }
 
   async function getLocation() {
-    // alert('getting')
+    
 
     const API = `https://us1.locationiq.com/v1/search.php?key=${API_KEY}&q=${searchQuery}&format=json`;
     console.log('Before Axios Request', API);
@@ -25,28 +27,53 @@ export default function App() {
       const response = await axios.get(API);
       console.log('API Response:', response.data);
       const { display_name, lat, lon } = response.data[0];
-      
+
 
       setLocation({ city: display_name, lat, lon });
-      
+      exploreMap(lat, lon);
+
     }
-   catch (error){
-   console.error('API Request Error:', error);
-   }
+    catch (error) {
+      console.error('API Request Error:', error);
+    }
   }
 
+  const exploreMap = async (cityLat, cityLon) => {
+    try {
+      if (!location.lat || !location.lon) {
+        console.warn('Location data is not available. Aborting exploreMap.');
+        return;
+      }
+      const locationString = `${cityLat},${cityLon}`;
+      // value not being held
+     console.log(locationString);
+      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
 
-console.log(location)
-return (
-  <Container>
-    <LocationForm
-      handleChangeCity={getLocation}
-      updateQuery={updateQuery}
-   />
-    <h2>The city is {location.city}</h2>
-    <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>
-  </Container>
-);
+      console.log(apiUrl);
+     
+        setMapImage(apiUrl);
+
+    } catch (error) {
+      console.error('API Request Error:', error);
+    }
+  };
+
+
+
+  return (
+    <Container>
+      <LocationForm
+        handleChangeCity={getLocation}
+        updateQuery={updateQuery}
+        exploreMap={exploreMap}
+      />
+      <h2>The city is {location.city}</h2>
+      <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>
+      <div>
+        {mapImage && <img src={mapImage} alt="Map" />}
+      </div>
+    </Container>
+  );
 
 }
 
