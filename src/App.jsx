@@ -7,7 +7,7 @@ import axios from 'axios';
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export default function App() {
-  const [location, setLocation] = useState({ city: '', lat: '', lon: '' });
+  const [location, setLocation] = useState({ display_name: '', lat: '', lon: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [mapImage, setMapImage] = useState(null);
 
@@ -39,8 +39,9 @@ export default function App() {
   }
 
   const exploreMap = async (cityLat, cityLon) => {
+    console.log(cityLat, cityLon);
     try {
-      if (!location.lat || !location.lon) {
+      if (!cityLat|| !cityLon) {
         console.warn('Location data is not available. Aborting exploreMap.');
         return;
       }
@@ -65,7 +66,6 @@ export default function App() {
       <LocationForm
         handleChangeCity={getLocation}
         updateQuery={updateQuery}
-        exploreMap={exploreMap}
       />
       <h2>The city is {location.city}</h2>
       <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>

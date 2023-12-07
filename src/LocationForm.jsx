@@ -4,16 +4,19 @@ import Button from 'react-bootstrap/Button';
 
 
 
-export default function LocationForm({handleChangeCity, updateQuery, exploreMap, searchQuery}) {
+export default function LocationForm({handleChangeCity, updateQuery, searchQuery}) {
 
   
   function handleSubmit(event) {
     event.preventDefault();
     const inputValue = searchQuery;
     const cityValue = event.target.value;
+    console.log(cityValue);
+    // undefined
     handleChangeCity(cityValue);
     console.log(inputValue, 'input value');
-    exploreMap(cityValue);
+    // undefined
+    
   }
 
 
