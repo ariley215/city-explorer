@@ -10,20 +10,23 @@ export default function App() {
   const [location, setLocation] = useState({ display_name: '', lat: '', lon: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [mapImage, setMapImage] = useState(null);
+  const [error, setError] = useState(null);
 
   function updateQuery(event) {
     console.log(event.target.value)
     setSearchQuery(event.target.value);
-  
-  
+
+
+
   }
 
   async function getLocation() {
-    
+
 
     const API = `https://us1.locationiq.com/v1/search.php?key=${API_KEY}&q=${searchQuery}&format=json`;
     console.log('Before Axios Request', API);
     try {
+      setError(null);
       const response = await axios.get(API);
       console.log('API Response:', response.data);
       const { display_name, lat, lon } = response.data[0];
@@ -35,28 +38,49 @@ export default function App() {
     }
     catch (error) {
       console.error('API Request Error:', error);
+      if (error.response) {
+        const { status, data } = error.response;
+
+        if (status === 400) {
+          setError(`Bad Request: ${data.error || 'Invalid input data'}`);
+        } else if (status === 404) {
+          setError(`Not Found: ${data.error || 'Resource not found'}`);
+        } else if (status === 500) {
+          setError(`Internal Server Error: ${data.error || 'Server error'}`);
+        } else {
+          setError(`Error: ${status}`);
+        }
+      } else {
+        setError('Network Error: Unable to connect to the server');
+      }
     }
   }
 
-  const exploreMap = async (cityLat, cityLon) => {
-    console.log(cityLat, cityLon);
-    try {
-      if (!cityLat|| !cityLon) {
-        console.warn('Location data is not available. Aborting exploreMap.');
-        return;
+    const exploreMap = async (cityLat, cityLon) => {
+      console.log(cityLat, cityLon);
+      try {
+        if (!cityLat || !cityLon) {
+          console.warn('Location data is not available. Aborting exploreMap.');
+          return;
+        }
+        const locationString = `${cityLat},${cityLon}`;
+        // value not being held
+        console.log(locationString);
+        const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
+
+        console.log(apiUrl);
+        const response = await axios.get(apiUrl);
+        if (response.data && response.data.error) {
+          console.log('Explore Map Error', response.data.error);
+          setError(`Map Error: $response.data.error`);
+        } else {
+          setMapImage(apiUrl);
+        }
+      } catch (error) {
+        console.error('API Request Error:', error);
+        setError('Unable to load map. Please try again.')
       }
-      const locationString = `${cityLat},${cityLon}`;
-      // value not being held
-     console.log(locationString);
-      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
-
-      console.log(apiUrl);
-     
-        setMapImage(apiUrl);
-
-    } catch (error) {
-      console.error('API Request Error:', error);
-    }
+    
   };
 
 
@@ -67,6 +91,11 @@ export default function App() {
         handleChangeCity={getLocation}
         updateQuery={updateQuery}
       />
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
       <h2>The city is {location.city}</h2>
       <p>Located at Latitute: {location.lat}, Longitude {location.lon}</p>
       <div>
@@ -76,4 +105,3 @@ export default function App() {
   );
 
 }
-
