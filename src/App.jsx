@@ -1,4 +1,5 @@
 /* eslint-disable no-empty */
+// add env file import
 import { useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import LocationForm from './LocationForm';
@@ -63,9 +64,7 @@ export default function App() {
           console.warn('Location data is not available. Aborting exploreMap.');
           return;
         }
-        const locationString = `${cityLat},${cityLon}`;
-        // value not being held
-        console.log(locationString);
+        
         const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
 
         console.log(apiUrl);
