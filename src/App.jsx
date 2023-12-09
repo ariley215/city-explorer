@@ -2,6 +2,7 @@
 // add env file import
 import { useState } from 'react'
 import Container from 'react-bootstrap/Container';
+import Weather from './Weather';
 import LocationForm from './LocationForm';
 import axios from 'axios';
 
@@ -12,6 +13,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mapImage, setMapImage] = useState(null);
   const [error, setError] = useState(null);
+  const [cityWeather, setCityWeather] = useState(null);
 
   function updateQuery(event) {
     console.log(event.target.value)
@@ -35,7 +37,7 @@ export default function App() {
 
       setLocation({ city: display_name, lat, lon });
       exploreMap(lat, lon);
-
+      getWeatherFromCitySearch(lat, lon);
     }
     catch (error) {
       console.error('API Request Error:', error);
@@ -57,30 +59,42 @@ export default function App() {
     }
   }
 
-    const exploreMap = async (cityLat, cityLon) => {
-      console.log(cityLat, cityLon);
-      try {
-        if (!cityLat || !cityLon) {
-          console.warn('Location data is not available. Aborting exploreMap.');
-          return;
-        }
-        
-        const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
-
-        console.log(apiUrl);
-        const response = await axios.get(apiUrl);
-        if (response.data && response.data.error) {
-          console.log('Explore Map Error', response.data.error);
-          setError(`Map Error: $response.data.error`);
-        } else {
-          setMapImage(apiUrl);
-        }
-      } catch (error) {
-        console.error('API Request Error:', error);
-        setError('Unable to load map. Please try again.')
+  const exploreMap = async (cityLat, cityLon) => {
+    console.log(cityLat, cityLon);
+    try {
+      if (!cityLat || !cityLon) {
+        console.warn('Location data is not available. Aborting exploreMap.');
+        return;
       }
-    
+
+      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
+
+      console.log(apiUrl);
+      const response = await axios.get(apiUrl);
+      if (response.data && response.data.error) {
+        console.log('Explore Map Error', response.data.error);
+        setError(`Map Error: $response.data.error`);
+      } else {
+        setMapImage(apiUrl);
+      }
+    } catch (error) {
+      console.error('API Request Error:', error);
+      setError('Unable to load map. Please try again.')
+    }
+
   };
+
+  async function getWeatherFromCitySearch(lat, lon) {
+    const localApi = 'http://localhost:3005';
+    console.log('local API', localApi);
+    const response = await axios.get(`${localApi}/weather?lon=${lat}&lat=${lon}&searchQuery=${searchQuery}`);
+    console.log(response, 'city weather response');
+    setCityWeather(response);
+
+
+
+
+  }
 
 
 
@@ -100,7 +114,20 @@ export default function App() {
       <div>
         {mapImage && <img src={mapImage} alt="Map" />}
       </div>
-    </Container>
+      {/* <p>Date: {JSON.stringify( */}
+      {cityWeather ?
+        cityWeather.data.weatherData.map((weather, idx) => (
+          // <div key={idx}>
+          //   <p>{weather.date}</p>
+          //   <p>{weather.description}</p>
+          // </div>
+          <Weather weather={weather}
+            key={idx} />
+        )) : <p></p>
+      }
+      {/* )}</p> */}
+      {/* <Weather cityWeather={cityWeather} /> */}
+    </Container >
   );
 
 }
