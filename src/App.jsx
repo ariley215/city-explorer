@@ -114,19 +114,12 @@ export default function App() {
       <div>
         {mapImage && <img src={mapImage} alt="Map" />}
       </div>
-      {/* <p>Date: {JSON.stringify( */}
       {cityWeather ?
         cityWeather.data.weatherData.map((weather, idx) => (
-          // <div key={idx}>
-          //   <p>{weather.date}</p>
-          //   <p>{weather.description}</p>
-          // </div>
           <Weather weather={weather}
             key={idx} />
         )) : <p></p>
       }
-      {/* )}</p> */}
-      {/* <Weather cityWeather={cityWeather} /> */}
     </Container >
   );
 
