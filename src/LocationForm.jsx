@@ -35,7 +35,6 @@ export default function LocationForm({handleChangeCity, updateQuery, searchQuery
         variant="primary" 
         type="submit" 
         onClick={handleChangeCity}>
-          {/* /* figure out where this onClick goes(here or App) */ }
           Explore!
         </Button>
         </Form.Group>
