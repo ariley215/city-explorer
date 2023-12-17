@@ -32,11 +32,11 @@ export default function App() {
       setError(null);
       const response = await axios.get(API);
       console.log('API Response:', response.data);
-      const { display_name, lat, lon } = response.data[0];
+      const { display_name, lon, lat } = response.data[0];
 
 
-      setLocation({ city: display_name, lat, lon });
-      exploreMap(lat, lon);
+      setLocation({ city: display_name, lon, lat });
+      exploreMap(lon, lat);
       getWeatherFromCitySearch(lat, lon);
     }
     catch (error) {
@@ -59,15 +59,15 @@ export default function App() {
     }
   }
 
-  const exploreMap = async (cityLat, cityLon) => {
-    console.log(cityLat, cityLon);
+  const exploreMap = async (cityLon, cityLat) => {
+    console.log(cityLon, cityLat);
     try {
-      if (!cityLat || !cityLon) {
+      if (!cityLon || !cityLat) {
         console.warn('Location data is not available. Aborting exploreMap.');
         return;
       }
 
-      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
+      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLon},${cityLat}&zoom=12`;
 
       console.log(apiUrl);
       const response = await axios.get(apiUrl);
@@ -84,10 +84,10 @@ export default function App() {
 
   };
 
-  async function getWeatherFromCitySearch(lat, lon) {
+  async function getWeatherFromCitySearch(lon, lat) {
     const localApi = 'http://localhost:3005';
     console.log('local API', localApi);
-    const response = await axios.get(`${localApi}/weather?lon=${lat}&lat=${lon}&searchQuery=${searchQuery}`);
+    const response = await axios.get(`${localApi}/weather?lon=${lon}&lat=${lat}&searchQuery=${searchQuery}`);
     console.log(response, 'city weather response');
     setCityWeather(response);
 
