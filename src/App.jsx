@@ -35,9 +35,9 @@ export default function App() {
       const { display_name, lon, lat } = response.data[0];
 
 
-      setLocation({ city: display_name, lon, lat });
-      exploreMap(lon, lat);
-      getWeatherFromCitySearch(lat, lon);
+      setLocation({ city: display_name, lat, lon });
+      exploreMap(lat, lon);
+      getWeatherFromCitySearch(lon, lat);
     }
     catch (error) {
       console.error('API Request Error:', error);
@@ -59,15 +59,15 @@ export default function App() {
     }
   }
 
-  const exploreMap = async (cityLon, cityLat) => {
-    console.log(cityLon, cityLat);
+  const exploreMap = async (cityLat, cityLon) => {
+    console.log(cityLat, cityLon);
     try {
-      if (!cityLon || !cityLat) {
+      if (!cityLat || !cityLon) {
         console.warn('Location data is not available. Aborting exploreMap.');
         return;
       }
 
-      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLon},${cityLat}&zoom=12`;
+      const apiUrl = `https://maps.locationiq.com/v3/staticmap?key=${API_KEY}&center=${cityLat},${cityLon}&zoom=12`;
 
       console.log(apiUrl);
       const response = await axios.get(apiUrl);
