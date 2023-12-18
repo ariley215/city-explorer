@@ -9,11 +9,9 @@ export default function displayWeather(weather, key) {
           <Card style={{ width: '18rem' }}>
             <Card.Body>
               <Card.Title>Daily Weather</Card.Title>
-              <Card.Text>
-                <div key={key}>
-                  <p>{weather.weather.date}</p>
-                  <p>{weather.weather.description}</p>
-                </div>
+              <Card.Text key={key}>
+                  {weather.weather.date}
+                  {weather.weather.description}
               </Card.Text>
             </Card.Body>
           </Card>
